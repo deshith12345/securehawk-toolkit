@@ -1,226 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureHawk - Password Security Toolkit</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>SecureHawk - Security Dashboard</title>
+    <link rel="stylesheet" href="style.css?v=3.7">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <!-- Reduced floating orbs for better mobile performance -->
-    <div class="floating-orb orb-1"></div>
-    <div class="floating-orb orb-2"></div>
 
-    <!-- Particles Container -->
-    <div class="particles" id="particles"></div>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <img src="images/eagle.png" alt="SecureHawk Logo" class="brand-logo"
+                    style="width: 40px; height: 40px; object-fit: contain;">
+                <span class="brand-name">SecureHawk</span>
+            </div>
 
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo-container">
-                    <img src="images/eagle.png" alt="SecureHawk Logo" class="hawk-logo">
+            <nav class="nav-menu">
+                <div class="nav-item active" data-tab="strength-checker">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Strength Checker</span>
                 </div>
-                <h1>SecureHawk</h1>
-            </div>
-        </div>
-    </header>
+                <div class="nav-item" data-tab="breach-checker">
+                    <i class="fas fa-database"></i>
+                    <span>Breach Scanner</span>
+                </div>
+                <div class="nav-item" data-tab="password-generator">
+                    <i class="fas fa-key"></i>
+                    <span>Generator</span>
+                </div>
+            </nav>
 
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Navigation Tabs -->
-        <div class="nav-tabs">
-            <div class="nav-tab active" data-tab="strength-checker">
-                <i class="fas fa-chart-line"></i> Password Strength
-            </div>
-            <div class="nav-tab" data-tab="breach-checker">
-                <i class="fas fa-database"></i> Password Breach
-            </div>
-            <div class="nav-tab" data-tab="password-generator">
-                <i class="fas fa-key"></i> Password Generator
-            </div>
-        </div>
 
-        <!-- Password Strength Checker Section -->
-        <section class="tool-section tab-content active" id="strength-checker">
-            <div class="section-header">
-                <h2><i class="fas fa-chart-line"></i> Password Strength Checker</h2>
-                <p>Analyze your password's strength and get recommendations</p>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- Mobile Header (Visible only on small screens via CSS) -->
+            <div class="page-header">
+                <h1 class="page-title">Security Dashboard</h1>
+                <p class="page-subtitle">Manage and audit your password security</p>
             </div>
-            
-            <div class="tool-box">
-                <div class="input-group">
-                    <label for="password-check">Enter Password to Check:</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" id="password-check" placeholder="Type your password here...">
-                        <button class="toggle-password" onclick="togglePassword('password-check')">
+
+            <!-- Password Strength Checker -->
+            <section class="tool-section active" id="strength-checker">
+                <div class="section-header">
+                    <h2><i class="fas fa-chart-line"></i> Password Strength Analysis</h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password-check">Password to Audit</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password-check" class="form-control" placeholder="Enter password...">
+                        <button class="btn-toggle" onclick="togglePassword('password-check')">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="strength-meter">
-                    <div class="strength-bar" id="strength-bar"></div>
-                </div>
-                <div class="strength-text" id="strength-text">Enter a password to check its strength</div>
+                <div class="strength-container">
+                    <div class="strength-meter-bar">
+                        <div class="strength-fill" id="strength-bar"></div>
+                    </div>
+                    <div class="strength-label" id="strength-text">Enter a password to check</div>
 
-                <div class="analysis-results" id="analysis-results" style="display: none;">
-                    <h3>Analysis:</h3>
-                    <ul id="analysis-list"></ul>
-                    
-                    <div class="password-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Length:</span>
+                    <div class="stats-grid">
+                        <div class="stat-box">
                             <span class="stat-value" id="stat-length">0</span>
+                            <span class="stat-label">Length</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Entropy:</span>
-                            <span class="stat-value" id="stat-entropy">0 bits</span>
+                        <div class="stat-box">
+                            <span class="stat-value" id="stat-entropy">0</span>
+                            <span class="stat-label">Entropy</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Crack Time:</span>
+                        <div class="stat-box">
                             <span class="stat-value" id="stat-crack">-</span>
+                            <span class="stat-label">Crack Time</span>
                         </div>
                     </div>
+
+                    <div id="analysis-results" style="display: none;">
+                        <ul class="analysis-list" id="analysis-list"></ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Breach Checker -->
+            <section class="tool-section" id="breach-checker">
+                <div class="section-header">
+                    <h2><i class="fas fa-database"></i> Data Breach Scanner</h2>
                 </div>
 
-                <div class="info-box">
-                    <h4><i class="fas fa-info-circle"></i> Why Password Strength Matters</h4>
-                    <p>Strong passwords are your first line of defense against unauthorized access. A weak password can be cracked in seconds using modern tools, while a strong password can take centuries to break.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Password Breach Checker Section -->
-        <section class="tool-section tab-content" id="breach-checker">
-            <div class="section-header">
-                <h2><i class="fas fa-database"></i> Password Breach Checker</h2>
-                <p>Check if your password has been exposed in data breaches</p>
-            </div>
-            
-            <div class="tool-box">
-                <div class="input-group">
-                    <label for="password-breach">Enter Password to Check:</label>
-                    <div class="password-input-wrapper">
-                        <input type="password" id="password-breach" placeholder="Type your password here...">
-                        <button class="toggle-password" onclick="togglePassword('password-breach')">
+                <div class="form-group">
+                    <p class="text-muted" style="margin-bottom: 1rem; color: var(--text-muted);">
+                        Uses k-Anonymity to safely check if your password has appeared in known data breaches without
+                        ever sending your full password.
+                    </p>
+                    <label class="form-label" for="password-breach">Password to Scan</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password-breach" class="form-control"
+                            placeholder="Enter password...">
+                        <button class="btn-toggle" onclick="togglePassword('password-breach')">
                             <i class="fas fa-eye"></i>
                         </button>
                     </div>
                 </div>
 
                 <button class="btn btn-primary" onclick="checkBreach()">
-                    <i class="fas fa-search"></i> Check for Breaches
+                    <i class="fas fa-search"></i> Check Database
                 </button>
 
-                <div class="breach-results" id="breach-results" style="display: none;"></div>
+                <!-- Results Container -->
+                <div id="breach-results" class="breach-alert"></div>
+            </section>
 
-                <div class="info-box">
-                    <h4><i class="fas fa-lock"></i> Your Privacy is Protected</h4>
-                    <p>We use the <strong>k-Anonymity</strong> method to check passwords. Your actual password is never sent to any server. Only the first 5 characters of the SHA-1 hash are transmitted, ensuring complete privacy.</p>
-                    <p><strong>How it works:</strong> Your password is hashed locally in your browser, and only a partial hash is sent to the Have I Been Pwned API to check against known breaches.</p>
+            <!-- Password Generator -->
+            <section class="tool-section" id="password-generator">
+                <div class="section-header">
+                    <h2><i class="fas fa-key"></i> Strong Password Generator</h2>
                 </div>
-            </div>
-        </section>
 
-        <!-- Password Generator Section -->
-        <section class="tool-section tab-content" id="password-generator">
-            <div class="section-header">
-                <h2><i class="fas fa-key"></i> Secure Password Generator</h2>
-                <p>Generate strong, random passwords tailored to your needs</p>
-            </div>
-            
-            <div class="tool-box">
-                <div class="generator-options">
-                    <div class="option-group">
-                        <label for="password-length">Password Length: <span id="length-value">16</span></label>
-                        <input type="range" id="password-length" min="8" max="64" value="16" oninput="updateLengthValue(this.value)">
-                    </div>
+                <div class="range-wrap">
+                    <label class="form-label">Length: <span id="length-value"
+                            style="color: var(--primary); font-weight: 700;">16</span></label>
+                    <input type="range" id="password-length" min="8" max="64" value="16"
+                        oninput="updateLengthValue(this.value)">
+                </div>
 
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox" id="include-uppercase" checked>
-                            <span>Uppercase Letters (A-Z)</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="include-lowercase" checked>
-                            <span>Lowercase Letters (a-z)</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="include-numbers" checked>
-                            <span>Numbers (0-9)</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="include-symbols" checked>
-                            <span>Symbols (!@#$%^&*)</span>
-                        </label>
-                        <label>
-                            <input type="checkbox" id="exclude-ambiguous">
-                            <span>Exclude Ambiguous Characters (0, O, l, 1, etc.)</span>
-                        </label>
-                    </div>
+                <div class="options-grid">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="include-uppercase" checked>
+                        <span>Uppercase (A-Z)</span>
+                    </label>
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="include-lowercase" checked>
+                        <span>Lowercase (a-z)</span>
+                    </label>
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="include-numbers" checked>
+                        <span>Numbers (0-9)</span>
+                    </label>
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="include-symbols" checked>
+                        <span>Symbols ($@!)</span>
+                    </label>
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="exclude-ambiguous">
+                        <span>No Ambiguous (0/O)</span>
+                    </label>
                 </div>
 
                 <button class="btn btn-primary" onclick="generatePassword()">
-                    <i class="fas fa-sync-alt"></i> Generate Password
+                    <i class="fas fa-sync-alt"></i> Generate New Password
                 </button>
 
-                <div class="generated-password" id="generated-password-container" style="display: none;">
-                    <div class="password-display" id="generated-password"></div>
-                    <button class="btn btn-secondary" onclick="copyPassword()">
-                        <i class="fas fa-copy"></i> Copy to Clipboard
-                    </button>
-                    <div class="copy-feedback" id="copy-feedback">✓ Copied!</div>
+                <div id="generated-password-container" style="display: none;">
+                    <div class="generated-result">
+                        <span id="generated-password"></span>
+                        <button class="btn btn-secondary"
+                            style="background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white;"
+                            onclick="copyPassword()">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                    <div id="copy-feedback" style="margin-top: 0.5rem; color: var(--success); display: none;">Copied to
+                        clipboard!</div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 SecureHawk</p>
-            <p>Powered by Have I Been Pwned API | All checks performed securely using k-Anonymity</p>
-        </div>
-    </footer>
+        </main>
+    </div>
 
-    <script src="script.js"></script>
-    <script>
-        // Optimized particle creation for mobile
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            // Reduce particles on mobile devices
-            const isMobile = window.innerWidth < 768;
-            const particleCount = isMobile ? 10 : 30;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                
-                const size = Math.random() * 4 + 2;
-                const startX = Math.random() * 100;
-                const driftX = (Math.random() - 0.5) * 100;
-                const duration = Math.random() * 15 + 10;
-                const delay = Math.random() * 10;
-                const scale = Math.random() * 0.5 + 0.5;
-                
-                particle.style.cssText = `
-                    width: ${size}px;
-                    height: ${size}px;
-                    left: ${startX}%;
-                    animation-duration: ${duration}s;
-                    animation-delay: ${delay}s;
-                    --drift-x: ${driftX}px;
-                    --scale: ${scale};
-                `;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-
-        // Initialize particles on load
-        document.addEventListener('DOMContentLoaded', createParticles);
-    </script>
+    <script src="script.js?v=3.6"></script>
 </body>
+
 </html>

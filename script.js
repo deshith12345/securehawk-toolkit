@@ -5,6 +5,9 @@ const strengthText = document.getElementById('strength-text');
 const analysisResults = document.getElementById('analysis-results');
 const analysisList = document.getElementById('analysis-list');
 
+console.log('SecureHawk Logic v3.5 Loaded'); // Cache Confirmation
+
+
 // Common weak password patterns
 const commonPasswords = [
     'password', '123456', '12345678', 'qwerty', 'abc123', 'monkey', '1234567',
@@ -19,7 +22,7 @@ const keyboardPatterns = [
 
 // Event listener for password strength checking
 if (passwordCheckInput) {
-    passwordCheckInput.addEventListener('input', function() {
+    passwordCheckInput.addEventListener('input', function () {
         const password = this.value;
         if (password.length === 0) {
             resetStrengthChecker();
@@ -52,7 +55,7 @@ function analyzePassword(password) {
 
 function calculateStrength(password, analysis) {
     let score = 0;
-    
+
     // Length scoring
     if (password.length >= 8) score += 1;
     if (password.length >= 12) score += 1;
@@ -74,14 +77,14 @@ function calculateStrength(password, analysis) {
     // Determine strength level
     if (score <= 2) return 'very-weak';
     if (score <= 4) return 'weak';
-    if (score <= 6) return 'fair';
-    if (score <= 8) return 'good';
+    if (score <= 5) return 'fair';
+    if (score <= 6) return 'good';
     return 'strong';
 }
 
 function calculateEntropy(password) {
     let poolSize = 0;
-    
+
     if (/[a-z]/.test(password)) poolSize += 26;
     if (/[A-Z]/.test(password)) poolSize += 26;
     if (/[0-9]/.test(password)) poolSize += 10;
@@ -107,7 +110,7 @@ function estimateCrackTime(entropy) {
 function hasSequentialChars(password) {
     const sequential = ['0123456789', 'abcdefghijklmnopqrstuvwxyz'];
     const lowerPass = password.toLowerCase();
-    
+
     for (let seq of sequential) {
         for (let i = 0; i < seq.length - 2; i++) {
             if (lowerPass.includes(seq.substring(i, i + 3))) {
@@ -132,18 +135,32 @@ function hasRepeatingChars(password) {
 }
 
 function updateStrengthMeter(strength) {
-    strengthBar.className = 'strength-bar ' + strength;
-    
-    const strengthLabels = {
-        'very-weak': 'Very Weak - Easily cracked',
-        'weak': 'Weak - Not recommended',
-        'fair': 'Fair - Could be better',
-        'good': 'Good - Decent security',
-        'strong': 'Strong - Excellent security'
+    // Explicitly control aesthetics via JS to ensure reliability
+    const styles = {
+        'very-weak': { width: '20%', color: '#FF3B30' }, // Apple Red
+        'weak': { width: '40%', color: '#FF9F0A' }, // Apple Orange
+        'fair': { width: '60%', color: '#FFD60A' }, // Apple Yellow
+        'good': { width: '80%', color: '#34C759' }, // Apple Green
+        'strong': { width: '100%', color: '#30D158' } // Apple Bright Green
     };
-    
+
+    const config = styles[strength];
+
+    // Force inline styles to override any CSS specificity issues
+    strengthBar.className = 'strength-fill'; // Reset base class
+    strengthBar.style.width = config.width;
+    strengthBar.style.backgroundColor = config.color;
+    strengthBar.style.boxShadow = `0 0 10px ${config.color}`; // Add glow directly
+
+    const strengthLabels = {
+        'very-weak': 'Very Weak',
+        'weak': 'Weak',
+        'fair': 'Fair',
+        'good': 'Good',
+        'strong': 'Strong'
+    };
+
     strengthText.textContent = strengthLabels[strength];
-    strengthText.className = 'strength-text ' + strength;
 }
 
 function displayAnalysis(password, analysis, entropy, crackTime) {
@@ -154,72 +171,54 @@ function displayAnalysis(password, analysis, entropy, crackTime) {
 
     // Positive feedback
     if (analysis.length >= 12) {
-        feedback.push({ type: 'positive', text: `Good length (${analysis.length} characters)` });
+        feedback.push({ type: 'valid', text: `Length: ${analysis.length} chars` });
     } else {
-        feedback.push({ type: 'negative', text: `Too short - use at least 12 characters (currently ${analysis.length})` });
+        feedback.push({ type: 'invalid', text: `Too short (<12 chars)` });
     }
 
-    if (analysis.hasUppercase) {
-        feedback.push({ type: 'positive', text: 'Contains uppercase letters' });
-    } else {
-        feedback.push({ type: 'negative', text: 'Add uppercase letters (A-Z)' });
-    }
+    if (analysis.hasUppercase) feedback.push({ type: 'valid', text: 'Uppercase' });
+    else feedback.push({ type: 'invalid', text: 'Missing Uppercase' });
 
-    if (analysis.hasLowercase) {
-        feedback.push({ type: 'positive', text: 'Contains lowercase letters' });
-    } else {
-        feedback.push({ type: 'negative', text: 'Add lowercase letters (a-z)' });
-    }
+    if (analysis.hasLowercase) feedback.push({ type: 'valid', text: 'Lowercase' });
+    else feedback.push({ type: 'invalid', text: 'Missing Lowercase' });
 
-    if (analysis.hasNumbers) {
-        feedback.push({ type: 'positive', text: 'Contains numbers' });
-    } else {
-        feedback.push({ type: 'negative', text: 'Add numbers (0-9)' });
-    }
+    if (analysis.hasNumbers) feedback.push({ type: 'valid', text: 'Numbers' });
+    else feedback.push({ type: 'invalid', text: 'Missing Numbers' });
 
-    if (analysis.hasSymbols) {
-        feedback.push({ type: 'positive', text: 'Contains special symbols' });
-    } else {
-        feedback.push({ type: 'negative', text: 'Add special symbols (!@#$%^&*)' });
-    }
+    if (analysis.hasSymbols) feedback.push({ type: 'valid', text: 'Symbols' });
+    else feedback.push({ type: 'invalid', text: 'Missing Symbols' });
 
     // Negative patterns
-    if (analysis.isCommon) {
-        feedback.push({ type: 'negative', text: 'This is a common password - avoid it!' });
-    }
-
-    if (analysis.hasSequential) {
-        feedback.push({ type: 'negative', text: 'Contains sequential characters (123, abc)' });
-    }
-
-    if (analysis.hasKeyboardPattern) {
-        feedback.push({ type: 'negative', text: 'Contains keyboard patterns (qwerty, asdf)' });
-    }
-
-    if (analysis.hasRepeatingChars) {
-        feedback.push({ type: 'negative', text: 'Contains repeating characters (aaa, 111)' });
-    }
+    if (analysis.isCommon) feedback.push({ type: 'invalid', text: 'Common Password' });
+    if (analysis.hasSequential) feedback.push({ type: 'invalid', text: 'Sequential Chars' });
+    if (analysis.hasKeyboardPattern) feedback.push({ type: 'invalid', text: 'Keyboard Pattern' });
+    if (analysis.hasRepeatingChars) feedback.push({ type: 'invalid', text: 'Repeating Chars' });
 
     feedback.forEach(item => {
         const li = document.createElement('li');
-        li.className = item.type;
-        li.innerHTML = item.type === 'positive' 
-            ? `<i class="fas fa-check-circle"></i> ${item.text}`
-            : `<i class="fas fa-times-circle"></i> ${item.text}`;
+        li.className = 'analysis-item ' + item.type;
+        li.innerHTML = item.type === 'valid'
+            ? `<i class="fas fa-check"></i> ${item.text}`
+            : `<i class="fas fa-times"></i> ${item.text}`;
         analysisList.appendChild(li);
     });
 
     // Update stats
     document.getElementById('stat-length').textContent = analysis.length;
-    document.getElementById('stat-entropy').textContent = entropy.toFixed(1) + ' bits';
+    document.getElementById('stat-entropy').textContent = entropy.toFixed(0);
     document.getElementById('stat-crack').textContent = crackTime;
 }
 
 function resetStrengthChecker() {
-    strengthBar.className = 'strength-bar';
-    strengthText.textContent = 'Enter a password to check its strength';
-    strengthText.className = 'strength-text';
+    strengthBar.className = 'strength-fill';
+    strengthBar.style.width = '0%';
+    strengthBar.style.backgroundColor = 'transparent';
+    strengthText.textContent = 'Enter a password to check';
     analysisResults.style.display = 'none';
+
+    document.getElementById('stat-length').textContent = '0';
+    document.getElementById('stat-entropy').textContent = '0';
+    document.getElementById('stat-crack').textContent = '-';
 }
 
 // Password Breach Checker
@@ -230,14 +229,16 @@ async function checkBreach() {
 
     if (!password) {
         resultsDiv.style.display = 'block';
-        resultsDiv.className = 'breach-results error';
-        resultsDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please enter a password to check.';
+        resultsDiv.className = 'breach-alert danger';
+        resultsDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please enter a password to check.';
         return;
     }
 
     resultsDiv.style.display = 'block';
-    resultsDiv.className = 'breach-results';
-    resultsDiv.innerHTML = '<i class="fas fa-spinner loading"></i> Checking password against breach database...';
+    resultsDiv.className = 'breach-alert';
+    resultsDiv.style.backgroundColor = '#f1f5f9'; // Neutral loading
+    resultsDiv.style.color = '#64748b';
+    resultsDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking database...';
 
     try {
         // Hash the password using SHA-1
@@ -264,36 +265,35 @@ async function checkBreach() {
         }
 
         if (found) {
-            resultsDiv.className = 'breach-results compromised';
+            resultsDiv.className = 'breach-alert danger';
+            resultsDiv.style.backgroundColor = ''; // Use class styles
+            resultsDiv.style.color = '';
             resultsDiv.innerHTML = `
-                <i class="fas fa-exclamation-triangle"></i>
-                <strong>WARNING: This password has been compromised!</strong><br>
-                This password has appeared <strong>${count.toLocaleString()}</strong> times in data breaches.<br>
-                <strong>You should NOT use this password!</strong>
-                <div class="info-box" style="margin-top: 1rem;">
-                    <h4><i class="fas fa-shield-alt"></i> Recommended Actions:</h4>
-                    <ul>
-                        <li>Change this password immediately if you're using it</li>
-                        <li>Use the Password Generator to create a strong, unique password</li>
-                        <li>Enable two-factor authentication on all accounts</li>
-                        <li>Never reuse passwords across different websites</li>
-                    </ul>
+                <div style="font-weight: bold; margin-bottom: 0.5rem; font-size: 1.1em;">
+                    <i class="fas fa-triangle-exclamation"></i> Compromised!
+                </div>
+                <div>
+                    This password appears <strong>${count.toLocaleString()}</strong> times in data breaches.
+                    <br>Do not use this password on any account.
                 </div>
             `;
         } else {
-            resultsDiv.className = 'breach-results safe';
+            resultsDiv.className = 'breach-alert safe';
+            resultsDiv.style.backgroundColor = '';
+            resultsDiv.style.color = '';
             resultsDiv.innerHTML = `
-                <i class="fas fa-check-circle"></i>
-                <strong>Good news!</strong> This password has not been found in any known data breaches.<br>
-                However, ensure it's strong and unique for each account.
+                <div style="font-weight: bold; margin-bottom: 0.5rem; font-size: 1.1em;">
+                    <i class="fas fa-check-shield"></i> Safe
+                </div>
+                <div>
+                    This password was not found in the breach database.
+                </div>
             `;
         }
     } catch (error) {
-        resultsDiv.className = 'breach-results error';
+        resultsDiv.className = 'breach-alert danger';
         resultsDiv.innerHTML = `
-            <i class="fas fa-exclamation-triangle"></i>
-            Unable to check password at this time. Please try again later.<br>
-            <small>Error: ${error.message}</small>
+            <i class="fas fa-times-circle"></i> Unable to check password. Network error?
         `;
         console.error('Breach check error:', error);
     }
@@ -340,76 +340,76 @@ function generatePassword() {
 
 function createPassword(options) {
     let charset = '';
-    
+
     if (options.includeUppercase) {
         charset += options.excludeAmbiguous ? 'ABCDEFGHJKLMNPQRSTUVWXYZ' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     }
-    
+
     if (options.includeLowercase) {
         charset += options.excludeAmbiguous ? 'abcdefghijkmnopqrstuvwxyz' : 'abcdefghijklmnopqrstuvwxyz';
     }
-    
+
     if (options.includeNumbers) {
         charset += options.excludeAmbiguous ? '23456789' : '0123456789';
     }
-    
+
     if (options.includeSymbols) {
         charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
     }
-    
+
     let password = '';
     const chars = new Array(options.length);
-    
+
     // Use crypto for secure randomness
     const getRandomIndex = (max) => {
         const array = new Uint32Array(1);
         crypto.getRandomValues(array);
         return array[0] % max;
     };
-    
+
     for (let i = 0; i < options.length; i++) {
         chars[i] = charset[getRandomIndex(charset.length)];
     }
-    
+
     password = chars.join('');
-    
+
     // Ensure at least one character from each selected type
     if (options.includeUppercase && !/[A-Z]/.test(password)) {
         const upperChars = options.excludeAmbiguous ? 'ABCDEFGHJKLMNPQRSTUVWXYZ' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         chars[0] = upperChars[getRandomIndex(upperChars.length)];
     }
-    
+
     if (options.includeLowercase && !/[a-z]/.test(password)) {
         const lowerChars = options.excludeAmbiguous ? 'abcdefghijkmnopqrstuvwxyz' : 'abcdefghijklmnopqrstuvwxyz';
         chars[1] = lowerChars[getRandomIndex(lowerChars.length)];
     }
-    
+
     if (options.includeNumbers && !/[0-9]/.test(password)) {
         const numChars = options.excludeAmbiguous ? '23456789' : '0123456789';
         chars[2] = numChars[getRandomIndex(numChars.length)];
     }
-    
+
     if (options.includeSymbols && !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
         const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
         chars[3] = symbolChars[getRandomIndex(symbolChars.length)];
     }
-    
+
     // Shuffle using Fisher-Yates with crypto randomness
     for (let i = chars.length - 1; i > 0; i--) {
         const j = getRandomIndex(i + 1);
         [chars[i], chars[j]] = [chars[j], chars[i]];
     }
-    
+
     return chars.join('');
 }
 
 function displayGeneratedPassword(password) {
     const container = document.getElementById('generated-password-container');
     const display = document.getElementById('generated-password');
-    
+
     display.textContent = password;
     container.style.display = 'block';
-    
+
     // Store password for copying
     container.dataset.password = password;
 }
@@ -418,11 +418,11 @@ function copyPassword() {
     const container = document.getElementById('generated-password-container');
     const password = container.dataset.password;
     const feedback = document.getElementById('copy-feedback');
-    
+
     navigator.clipboard.writeText(password).then(() => {
-        feedback.classList.add('show');
+        feedback.style.display = 'block';
         setTimeout(() => {
-            feedback.classList.remove('show');
+            feedback.style.display = 'none';
         }, 2000);
     }).catch(err => {
         alert('Failed to copy password');
@@ -435,7 +435,7 @@ function togglePassword(inputId) {
     const input = document.getElementById(inputId);
     const button = input.nextElementSibling;
     const icon = button.querySelector('i');
-    
+
     if (input.type === 'password') {
         input.type = 'text';
         icon.classList.remove('fa-eye');
@@ -447,18 +447,18 @@ function togglePassword(inputId) {
     }
 }
 
-// Tab Navigation System
-document.addEventListener('DOMContentLoaded', function() {
-    const navTabs = document.querySelectorAll('.nav-tab');
-    const tabContents = document.querySelectorAll('.tab-content');
+// Tab Navigation System (Updated for Sidebar)
+document.addEventListener('DOMContentLoaded', function () {
+    const navItems = document.querySelectorAll('.nav-item');
+    const toolSections = document.querySelectorAll('.tool-section');
 
-    navTabs.forEach(tab => {
-        tab.addEventListener('click', function() {
+    navItems.forEach(item => {
+        item.addEventListener('click', function () {
             const targetTab = this.getAttribute('data-tab');
 
             // Remove active class from all tabs and contents
-            navTabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
+            navItems.forEach(t => t.classList.remove('active'));
+            toolSections.forEach(section => section.classList.remove('active'));
 
             // Add active class to clicked tab and corresponding content
             this.classList.add('active');
