@@ -438,7 +438,7 @@ function generatePassword() {
     const includeLowercase = document.getElementById('include-lowercase').checked;
     const includeNumbers = document.getElementById('include-numbers').checked;
     const includeSymbols = document.getElementById('include-symbols').checked;
-    const excludeAmbiguous = document.getElementById('exclude-ambiguous').checked;
+
 
     // Validate that at least one character type is selected
     if (!includeUppercase && !includeLowercase && !includeNumbers && !includeSymbols) {
@@ -452,7 +452,7 @@ function generatePassword() {
         includeLowercase,
         includeNumbers,
         includeSymbols,
-        excludeAmbiguous
+
     };
 
     const password = createPassword(options);
@@ -471,16 +471,15 @@ function createPassword(options) {
 
     // Build character set based on options
     if (options.includeUppercase) {
-        // Exclude ambiguous characters like O and I if requested
-        charset += options.excludeAmbiguous ? 'ABCDEFGHJKLMNPQRSTUVWXYZ' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     }
 
     if (options.includeLowercase) {
-        charset += options.excludeAmbiguous ? 'abcdefghijkmnopqrstuvwxyz' : 'abcdefghijklmnopqrstuvwxyz';
+        charset += 'abcdefghijklmnopqrstuvwxyz';
     }
 
     if (options.includeNumbers) {
-        charset += options.excludeAmbiguous ? '23456789' : '0123456789';
+        charset += '0123456789';
     }
 
     if (options.includeSymbols) {
@@ -509,17 +508,17 @@ function createPassword(options) {
 
     // Ensure at least one character from each selected type
     if (options.includeUppercase && !/[A-Z]/.test(password)) {
-        const upperChars = options.excludeAmbiguous ? 'ABCDEFGHJKLMNPQRSTUVWXYZ' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const upperChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         chars[0] = upperChars[getRandomIndex(upperChars.length)];
     }
 
     if (options.includeLowercase && !/[a-z]/.test(password)) {
-        const lowerChars = options.excludeAmbiguous ? 'abcdefghijkmnopqrstuvwxyz' : 'abcdefghijklmnopqrstuvwxyz';
+        const lowerChars = 'abcdefghijklmnopqrstuvwxyz';
         chars[1] = lowerChars[getRandomIndex(lowerChars.length)];
     }
 
     if (options.includeNumbers && !/[0-9]/.test(password)) {
-        const numChars = options.excludeAmbiguous ? '23456789' : '0123456789';
+        const numChars = '0123456789';
         chars[2] = numChars[getRandomIndex(numChars.length)];
     }
 
