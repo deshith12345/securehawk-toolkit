@@ -65,19 +65,19 @@ function analyzePassword(password) {
         hasUppercase: /[A-Z]/.test(password),
         hasLowercase: /[a-z]/.test(password),
         hasNumbers: /[0-9]/.test(password),
-        hasSymbols: /[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/ ?]/.test(password),
+        hasSymbols: /[^a-zA-Z0-9]/.test(password),
         hasSequential: hasSequentialChars(password),
-            hasKeyboardPattern: hasKeyboardPattern(password),
-                isCommon: isCommonPassword(password),
-                    hasRepeatingChars: hasRepeatingChars(password)
-};
+        hasKeyboardPattern: hasKeyboardPattern(password),
+        isCommon: isCommonPassword(password),
+        hasRepeatingChars: hasRepeatingChars(password)
+    };
 
-const strength = calculateStrength(password, analysis);
-const entropy = calculateEntropy(password);
-const crackTime = estimateCrackTime(entropy);
+    const strength = calculateStrength(password, analysis);
+    const entropy = calculateEntropy(password);
+    const crackTime = estimateCrackTime(entropy);
 
-updateStrengthMeter(strength);
-displayAnalysis(password, analysis, entropy, crackTime);
+    updateStrengthMeter(strength);
+    displayAnalysis(password, analysis, entropy, crackTime);
 }
 
 /**
@@ -523,7 +523,7 @@ function createPassword(options) {
         chars[2] = numChars[getRandomIndex(numChars.length)];
     }
 
-    if (options.includeSymbols && !/[!@#$%^&*()_+\\-=\\[\\]{};':"\\\\|,.<>\\/ ?]/.test(password)) {
+    if (options.includeSymbols && !/[^a-zA-Z0-9]/.test(password)) {
         const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
         chars[3] = symbolChars[getRandomIndex(symbolChars.length)];
     }
@@ -609,7 +609,7 @@ function togglePassword(inputId) {
 document.addEventListener('DOMContentLoaded', function () {
     const navItems = document.querySelectorAll('.nav-item');
     const toolSections = document.querySelectorAll('.tool-section');
-    
+
     // Mobile Navigation Logic
     const mobileToggle = document.getElementById('mobile-nav-toggle');
     const sidebar = document.querySelector('.sidebar');
@@ -647,7 +647,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (targetContent) {
                 targetContent.classList.add('active');
             }
-            
+
             // Close mobile menu on selection
             if (window.innerWidth <= 768) {
                 closeMenu();
