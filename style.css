@@ -562,6 +562,7 @@ input[type="range"] {
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: background 0.2s;
+    color: var(--text-primary);
 }
 
 .checkbox-wrapper:hover {
@@ -641,7 +642,8 @@ input[type="checkbox"] {
     }
 
     .mobile-nav-toggle {
-        display: flex; /* Show flex to center icon */
+        display: flex;
+        /* Show flex to center icon */
     }
 
     .sidebar {
@@ -658,7 +660,8 @@ input[type="checkbox"] {
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
-        background: rgba(255, 255, 255, 0.95); /* Light drawer for consistency or dark? user has dark theme body but light sidebar */
+        background: rgba(255, 255, 255, 0.95);
+        /* Light drawer for consistency or dark? user has dark theme body but light sidebar */
         /* Checking original sidebar: background: rgba(255, 255, 255, 0.85); */
     }
 
@@ -671,7 +674,8 @@ input[type="checkbox"] {
     .brand {
         margin-bottom: 1.5rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-        justify-content: flex-start; /* Reset from space-between if it was set */
+        justify-content: flex-start;
+        /* Reset from space-between if it was set */
     }
 
     .nav-menu {
@@ -680,29 +684,33 @@ input[type="checkbox"] {
     }
 
     .nav-item span {
-        display: inline; /* Show text again */
+        display: inline;
+        /* Show text again */
     }
-    
+
     .nav-item {
-        padding: 1rem 1.25rem; /* Restore padding */
+        padding: 1rem 1.25rem;
+        /* Restore padding */
         justify-content: flex-start;
     }
 
     .sidebar-footer {
-        display: block; /* Show footer again */
+        display: block;
+        /* Show footer again */
         margin-top: auto;
     }
 
     .main-content {
         padding: 1.5rem;
-        padding-top: 5rem; /* Space for toggle */
+        padding-top: 5rem;
+        /* Space for toggle */
     }
 
     /* Typography adjustments */
     .page-title {
         font-size: 1.75rem;
     }
-    
+
     .page-subtitle {
         font-size: 0.95rem;
     }
@@ -711,7 +719,7 @@ input[type="checkbox"] {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .stat-box {
         display: flex;
         justify-content: space-between;
@@ -719,18 +727,19 @@ input[type="checkbox"] {
         text-align: left;
         padding: 1rem;
     }
-    
+
     .stat-value {
         order: 2;
         font-size: 1.25rem;
-        margin-bottom: 0; /* Remove block display margins if any */
+        margin-bottom: 0;
+        /* Remove block display margins if any */
     }
-    
+
     .stat-label {
         order: 1;
         margin-top: 0;
     }
-    
+
     .generated-result {
         flex-direction: column;
         gap: 1rem;
@@ -739,11 +748,15 @@ input[type="checkbox"] {
     }
 
     /* Touch targets */
-    .nav-item, .btn {
+    .nav-item,
+    .btn {
         min-height: 48px;
     }
-    
-    input, select, textarea {
-        font-size: 16px !important; /* Prevent iOS zoom */
+
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+        /* Prevent iOS zoom */
     }
 }
