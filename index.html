@@ -42,11 +42,18 @@
         <!-- Main Content Area -->
         <main class="main-content">
 
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-nav-toggle" id="mobile-nav-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
             <!-- Mobile Header (Visible only on small screens via CSS) -->
             <div class="page-header">
                 <h1 class="page-title">Security Dashboard</h1>
                 <p class="page-subtitle">Manage and audit your password security</p>
             </div>
+            
+            <!-- ... content ... -->
 
             <!-- Password Strength Checker -->
             <section class="tool-section active" id="strength-checker">
@@ -175,6 +182,9 @@
             </section>
 
         </main>
+        
+        <!-- Mobile Sidebar Overlay -->
+        <div class="overlay" id="sidebar-overlay"></div>
     </div>
 
     <script src="script.js?v=3.6"></script>

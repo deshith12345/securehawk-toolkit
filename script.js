@@ -602,9 +602,36 @@ function togglePassword(inputId) {
  * Tab Navigation System
  * Handles switching between different tool sections
  */
+/**
+ * Tab Navigation System & Mobile Menu
+ * Handles switching between different tool sections and mobile drawer
+ */
 document.addEventListener('DOMContentLoaded', function () {
     const navItems = document.querySelectorAll('.nav-item');
     const toolSections = document.querySelectorAll('.tool-section');
+    
+    // Mobile Navigation Logic
+    const mobileToggle = document.getElementById('mobile-nav-toggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function toggleMenu() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+
+    function closeMenu() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+    }
+
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', toggleMenu);
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', closeMenu);
+    }
 
     navItems.forEach(item => {
         item.addEventListener('click', function () {
@@ -619,6 +646,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const targetContent = document.getElementById(targetTab);
             if (targetContent) {
                 targetContent.classList.add('active');
+            }
+            
+            // Close mobile menu on selection
+            if (window.innerWidth <= 768) {
+                closeMenu();
             }
         });
     });
