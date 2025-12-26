@@ -354,7 +354,7 @@ async function checkBreach() {
         const data = await response.text();
 
         // Parse response to find matching hash
-        const hashes = data.split('\\n');
+        const hashes = data.split('\r\n');
         let found = false;
         let count = 0;
 
